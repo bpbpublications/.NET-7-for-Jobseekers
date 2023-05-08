@@ -1,2 +1,2 @@
-# .Net 7 for Job Seekers
- .Net 7 for Job Seekers, by BPB Publications
+# .NET 7 for JobSeekers
+ .NET 7 for JobSeekers, by BPB Publications
