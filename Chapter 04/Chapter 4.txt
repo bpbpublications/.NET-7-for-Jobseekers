@@ -1,0 +1,132 @@
+//MVC
+1. @{ 
+2.     ViewData["Title"] = "Test Page MVC"; 
+3. } 
+4.  
+5. <h2>Test Page MVC</h2> 
+6.  
+7. <p>Welcome to the MVC View .Net 7!</p> 
+
+//Razor Page
+1.	@page 
+2.	@model WebAppNet7.Pages.TestPageModel
+3.	@{
+4.	         ViewData["Title"] = "Test Razor Page";
+5.	   }
+6.	
+7.	<h2>Test Razor Page </h2>
+8.	
+9.	<p> Welcome to the Razor Page .Net 7!</p>
+
+
+//Layout.cshtml
+1. <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between"> 
+2.   <ul class="navbar-nav flex-grow-1"> 
+3.      <li class="nav-item"> 
+4.         <a class="nav-link text-dark" asp-area="" aspcontroller="Home" asp-action="Index">Home</a> 
+5.      </li> 
+6.      <li class="nav-item"> 
+7.         <a class="nav-link text-dark" asp-area="" aspcontroller="Home" asp-action="Privacy">Privacy</a> 
+8.      </li> 
+9.      <li class="nav-item"> 
+10.          <a class="nav-link text-dark" asp-area="" aspcontroller="Home" asp-action="TestView">TestView</a> 
+11.      </li> 
+12.   </ul> 
+13.  </div> 
+
+
+//PartialAsync()
+1. <body> 
+2.     <header> 
+3.         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbarlight bg-white border-bottom box-shadow mb-3"> 
+4.             <div class="container-fluid"> 
+5.                 <a class="navbar-brand" asp-area="" aspcontroller="Home" asp-action="Index">WebAppMVC7</a> 
+6.                 <button class="navbar-toggler" type="button" data-bstoggle="collapse" data-bs-target=".navbar-collapse" aria-
+controls="navbarSupportedContent" 
+7.                         aria-expanded="false" arialabel="Toggle navigation"> 
+8.                     <span class="navbar-toggler-icon"></span> 
+9.                 </button> 
+10.                 @Html.PartialAsync("_TestPartial") 
+11.             </div> 
+12.         </nav> 
+13.     </header> 
+14.     <div class="container"> 
+15.         <main role="main" class="pb-3"> 
+16.             @RenderBody() 
+17.         </main> 
+18.     </div> 
+19.  
+20.     <footer class="border-top footer text-muted"> 
+21.         <div class="container"> 
+22.             &copy; 2022 - WebAppMVC7 - <a asp-area="" aspcontroller="Home" asp-action="Privacy">Privacy</a> 
+23.         </div> 
+24.     </footer> 
+25.     <script src="~/lib/jquery/dist/jquery.min.js"></script> 
+26.     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></scri pt> 
+27.     <script src="~/js/site.js" asp-append-version="true"></script> 
+28.     @await RenderSectionAsync("Scripts", required: false) 
+29. </body> 
+
+//RenderPartialAsync
+1.	<body> 
+2.	<header> 
+3.	<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbarlight bg-white border-bottom box-shadow mb-3"> 
+4.	<div class="container-fluid"> 
+	5.                 <a class="navbar-brand" asp-area="" aspcontroller="Home" asp-action="Index">WebAppMVC7</a> 
+	6.                 <button class="navbar-toggler" type="button" data-bstoggle="collapse" data-bs-target=".navbar-collapse" ariacontrols="navbarSupportedContent" 
+	7.                         aria-expanded="false" arialabel="Toggle navigation"> 
+	8.                     <span class="navbar-toggler-icon"></span> 
+	9.                 </button> 
+	10.                 @Html.RenderPartialAsync("_TestPartial") 
+	11.             </div> 
+	12.         </nav> 
+	13.     </header> 
+	14.     <div class="container"> 
+	15.         <main role="main" class="pb-3"> 
+	16.             @RenderBody() 
+	17.         </main> 
+	18.     </div> 
+	19.  
+	20.     <footer class="border-top footer text-muted"> 
+	21.         <div class="container"> 
+	22.             &copy; 2022 - WebAppMVC7 - <a asp-area="" aspcontroller="Home" asp-action="Privacy">Privacy</a> 
+	23.         </div> 
+	24.     </footer> 
+	25.     <script src="~/lib/jquery/dist/jquery.min.js"></script> 
+	26.     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></scri pt> 
+	27.     <script src="~/js/site.js" asp-append-version="true"></script> 
+	28.     @await RenderSectionAsync("Scripts", required: false) 
+	29. </body> 
+
+
+//Razor Layout.cshtml
+1. <div class="navbar-collapse collapse d-sm-inline-flex justify-content-
+between"> 
+2.   <ul class="navbar-nav flex-grow-1"> 
+3.      <li class="nav-item"> 
+4.         <a class="nav-link text-dark" asp-area="" aspcontroller="Home" asp-action="Index">Home</a> 
+5.      </li> 
+6.      <li class="nav-item"> 
+7.         <a class="nav-link text-dark" asp-area="" aspcontroller="Home" asp-action="Privacy">Privacy</a> 
+8.      </li> 
+9.      <li class="nav-item"> 
+10.          <a class="nav-link text-dark" asp-area="" asp-
+controller="Home" asp-action="TestView">TestView</a> 
+11.      </li> 
+12.   </ul> 
+13.  </div> 
+
+
+//@Html.Partial()
+1.	<header> 
+2.	<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbarlight bg-white border-bottom box-shadow mb-3"> 
+3.	<div class="container"> 
+4.	<a class="navbar-brand" asp-area="" asppage="/Index">WebAppNet7</a> 
+5.	<button class="navbar-toggler" type="button" data-bstoggle="collapse" data-bs-target=".navbar-collapse" ariacontrols="navbarSupportedContent" 
+6.	aria-expanded="false" arialabel="Toggle navigation"> 
+7.	<span class="navbar-toggler-icon"></span> 
+8.	</button> 
+9.	@await Html.PartialAsync("~/Pages/Shared/_TestPartial.cs html") 
+10.	</div> 
+11.	</nav> 
+12.	</header> 

@@ -1,0 +1,66 @@
+//JSon Deserialization example
+1.	using System.Text.Json;
+2.	
+3.	namespace DeserializeExtra
+4.	{
+5.	    public class WeatherForecast
+6.	    {
+7.	        public DateTimeOffset Date { get; set; }
+8.	        public int TemperatureCelsius { get; set; }
+9.	        public string? Summary { get; set; }
+10.	        public string? SummaryField;
+11.	        public IList<DateTimeOffset>? DatesAvailable { get; set; }
+12.	        public Dictionary<string, HighLowTemps>? TemperatureRanges { get; set; }
+13.	        public string[]? SummaryWords { get; set; }
+14.	    }
+15.	
+16.	    public class HighLowTemps
+17.	    {
+18.	        public int High { get; set; }
+19.	        public int Low { get; set; }
+20.	    }
+21.	
+22.	    public class Program
+23.	    {
+24.	        public static void Main()
+25.	        {
+26.	            string jsonString =
+27.	               @"{
+28.	                     ""Date"": ""2019-08-01T00:00:00-07:00"",
+29.	                     ""TemperatureCelsius"": 25,
+30.	                     ""Summary"": ""Hot"",
+31.	                     ""DatesAvailable"": [
+32.	                                         ""2019-08-01T00:00:00-07:00"",
+33.	                                         ""2019-08-02T00:00:00-07:00""
+34.	                                                   ],
+35.	                    ""TemperatureRanges"": {
+36.	                                         ""Cold"": {
+37.	                                                  ""High"": 20,
+38.	                                                  ""Low"": -10
+39.	                                                         },
+40.	                                         ""Hot"": {
+41.	                                                   ""High"": 60,
+42.	                                                   ""Low"": 20
+43.	                                                       }
+44.	                         },
+45.	                   ""SummaryWords"": [
+46.	                                         ""Cool"",
+47.	                                         ""Windy"",
+48.	                                         ""Humid""
+49.	                                                    ]
+50.	                   }
+51.	                   ";
+52.	                
+53.	            WeatherForecast? weatherForecast = 
+54.	                JsonSerializer.Deserialize<WeatherForecast>(jsonString);
+55.	
+56.	            Console.WriteLine($"Date: {weatherForecast?.Date}");
+57.	            Console.WriteLine($"TemperatureCelsius: {weatherForecast?.TemperatureCelsius}");
+58.	            Console.WriteLine($"Summary: {weatherForecast?.Summary}");
+59.	        }
+60.	    }
+61.	}
+62.	// output:
+63.	//Date: 8/1/2019 12:00:00 AM -07:00
+64.	//TemperatureCelsius: 25
+65.	//Summary: Hot

@@ -1,0 +1,124 @@
+//Controller calling a view
+1.	public IActionResult TestView()
+2.	{
+3.	    
+4.	    return View();
+5.	}
+
+//Pass data to a view, using a model
+1.	@model WebApplication1.ViewModels.Address
+2.	
+3.	<h2>Contact</h2>
+4.	<address>
+5.	    @Model.Street<br>
+6.	    @Model.City, @Model.State @Model.PostalCode<br>
+7.	    <abbr title="Phone">P:</abbr> 425.555.0100
+8.	</address>
+
+//Pass Data to a View, using the Controller
+1.	public IActionResult Contact()
+2.	{
+3.	    ViewData["Message"] = "Your contact page.";
+4.	
+5.	    var viewModel = new Address()
+6.	    {
+7.	        Name = "Microsoft",
+8.	        Street = "One Microsoft Way",
+9.	        City = "Redmond",
+10.	        State = "WA",
+11.	        PostalCode = "98052-6399"
+12.	    };
+13.	
+14.	    return View(viewModel);
+15.	}
+
+
+//Set a value using ViewData
+1.	public IActionResult SomeAction()
+2.	{
+3.	ViewData["Greeting"] = "Hello";
+4.	ViewData["Address"]  = new Address()
+5.	{
+6.	Name = "Steve",
+7.	Street = "123 Main St",
+8.	City = "Hudson",
+9.	State = "OH",
+10.	PostalCode = "44236"
+11.	};
+12.	return View();
+13.	}
+
+1.	@{
+2.	    // Since Address is not a string, it requires a cast.
+3.	    var address = ViewData["Address"] as Address;
+4.	}
+5.	
+6.	@ViewData["Greeting"] World!
+7.	
+8.	<address>
+9.	    @address.Name<br>
+10.	    @address.Street<br>
+11.	    @address.City, @address.State @address.PostalCode
+12.	</address>
+
+//Set a Property using ViewData
+1.	public class HomeController : Controller
+2.	{
+3.	    [ViewData]
+4.	    public string Title { get; set; }
+5.	
+6.	    public IActionResult About()
+7.	    {
+8.	        Title = "About Us";
+9.	        ViewData["Message"] = "Your application description page.";
+10.	
+11.	        return View();
+12.	    }
+13.	}
+
+1.	<!DOCTYPE html>
+2.	<html lang="en">
+3.	<head>
+4.	    <title>@ViewData["Title"] - WebApplication</title>
+5.	    ...
+
+
+//Use ViewBag
+1.	public IActionResult SomeAction()
+2.	{
+3.	    ViewBag.Greeting = "Hello";
+4.	    ViewBag.Address  = new Address()
+5.	    {
+6.	        Name = "Steve",
+7.	        Street = "123 Main St",
+8.	        City = "Hudson",
+9.	        State = "OH",
+10.	        PostalCode = "44236"
+11.	    };
+12.	
+13.	    return View();
+14.	}
+
+1.	@ViewBag.Greeting World!
+2.	
+3.	<address>
+4.	    @ViewBag.Address.Name<br>
+5.	    @ViewBag.Address.Street<br>
+6.	    @ViewBag.Address.City, @ViewBag.Address.State @ViewBag.Address.PostalCode
+7.	</address>
+
+//Use ViewBag and ViewData
+1.	@{
+2.	    Layout = "/Views/Shared/_Layout.cshtml";
+3.	    ViewBag.Title = "About Contoso";
+4.	    ViewData["Description"] = "Let us tell you about Contoso's philosophy and mission.";
+5.	}
+
+
+//View to View
+//•	Using ViewDataDictionary
+1.	@await Html.PartialAsync("_PartialName", customViewData)
+//•	Using the model directly
+1.	@await Html.PartialAsync("_PartialName", model)
+
+

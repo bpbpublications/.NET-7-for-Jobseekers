@@ -1,0 +1,44 @@
+//Change C# version
+1.	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+2.	     <LangVersion>10.0</LangVersion>
+3.	</PropertyGroup>
+4.	
+5.	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+6.	     <LangVersion>10.0</LangVersion>
+7.	</PropertyGroup>
+
+//Changing View Index.cshtml
+<div class="text-center">
+     <h1 class="display-4">Enter .Net 7 Universe </h1>
+     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET core</a>.</p>
+</div>
+
+//minimal APIs
+1. app.MapGet("/", () => "Welcome to Minimal API .Net 7!"); 
+
+//appsetting.json
+1.	{
+2.	    "App": {
+3.	      "Language": "pt",
+4.	      "SqlConn": "c:\\SQLConn\\Sql.json",
+5.	      "SqlError": true,
+6.	      "LogCalls": true,
+7.	      "LogError": true
+8.	    },
+9.	
+10.	      "FilePath": "C:\\MyFiles\\",
+11.	      "SMTP": {
+12.	        "SMTPServer": "mysmpt.domain.com",
+13.	        "EmailFrom": "myemail@domain.com"
+14.	      },
+15.	
+16.	  "Logging": {
+17.	    "LogLevel": {
+18.	      "Default": "Information",
+19.	      "Microsoft": "Warning"
+20.	    }
+21.	  },
+22.	  
+23.	  "AllowedHosts": "*"
+24.	
+25.	}

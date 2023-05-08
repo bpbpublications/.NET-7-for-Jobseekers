@@ -1,0 +1,248 @@
+//System.Devices
+1.	private void ReadDeviceInfo()
+2.	{
+3.	    System.Text.StringBuilder sb = new System.Text.StringBuilder();
+4.	
+5.	    sb.AppendLine($"Model: {DeviceInfo.Current.Model}");
+6.	    sb.AppendLine($"Manufacturer: {DeviceInfo.Current.Manufacturer}");
+7.	    sb.AppendLine($"Name: {DeviceInfo.Name}");
+8.	    sb.AppendLine($"OS Version: {DeviceInfo.VersionString}");
+9.	    sb.AppendLine($"Refresh Rate: {DeviceInfo.Current}");
+10.	    sb.AppendLine($"Idiom: {DeviceInfo.Current.Idiom}");
+11.	    sb.AppendLine($"Platform: {DeviceInfo.Current.Platform}");
+12.	
+13.	    bool isVirtual = DeviceInfo.Current.DeviceType switch
+14.	    {
+15.	        DeviceType.Physical => false,
+16.	        DeviceType.Virtual => true,
+17.	        _ => false
+18.	    };
+19.	
+20.	    sb.AppendLine($"Virtual device? {isVirtual}");
+21.	
+22.	    DisplayDeviceLabel.Text = sb.ToString();
+23.	}
+
+//Check if a device is virtual or physical
+1.	bool isVirtual = DeviceInfo.Current.DeviceType switch
+2.	{
+3.	    DeviceType.Physical => false,
+4.	    DeviceType.Virtual => true,
+5.	    _ => false
+6.	};
+
+
+//Read Device Display
+1.	private void ReadDeviceDisplay()
+2.	{
+3.	    System.Text.StringBuilder sb = new System.Text.StringBuilder();
+4.	
+5.	    sb.AppendLine($"Pixel width: {DeviceDisplay.Current.MainDisplayInfo.Width} / Pixel Height: {DeviceDisplay.Current.MainDisplayInfo.Height}");
+6.	    sb.AppendLine($"Density: {DeviceDisplay.Current.MainDisplayInfo.Density}");
+7.	    sb.AppendLine($"Orientation: {DeviceDisplay.Current.MainDisplayInfo.Orientation}");
+8.	    sb.AppendLine($"Rotation: {DeviceDisplay.Current.MainDisplayInfo.Rotation}");
+9.	    sb.AppendLine($"Refresh Rate: {DeviceDisplay.Current.MainDisplayInfo.RefreshRate}");
+10.	
+11.	    DisplayDetailsLabel.Text = sb.ToString();
+12.	}
+
+
+//Keep Screen On
+1.	private void AlwaysOnSwitch_Toggled(object sender, ToggledEventArgs e) =>
+2.	    DeviceDisplay.Current.KeepScreenOn = AlwaysOnSwitch.IsToggled;
+
+//Accelerometer Sensor
+1.	public void ToggleAccelerometer()
+2.	{
+3.	    if (Accelerometer.Default.IsSupported)
+4.	    {
+5.	        if (!Accelerometer.Default.IsMonitoring)
+6.	        {
+7.	            // Turn on accelerometer
+8.	            Accelerometer.Default.ReadingChanged += Accelerometer_ReadingChanged;
+9.	            Accelerometer.Default.Start(SensorSpeed.UI);
+10.	        }
+11.	        else
+12.	        {
+13.	            // Turn off accelerometer
+14.	            Accelerometer.Default.Stop();
+15.	            Accelerometer.Default.ReadingChanged -= Accelerometer_ReadingChanged;
+16.	        }
+17.	    }    
+18.	}
+19.	
+20.	private void Accelerometer_ReadingChanged(object sender, AccelerometerChangedEventArgs e)
+21.	{
+22.	    // Update UI Label with accelerometer state
+23.	    AccelLabel.TextColor = Colors.Green;
+24.	    AccelLabel.Text = $"Accel: {e.Reading}";
+25.	}
+
+
+//Barometer
+1.	public void ToggleBarometer()
+2.	{
+3.	    if (Barometer.Default.IsSupported)
+4.	    {
+5.	        if (!Barometer.Default.IsMonitoring)
+6.	        {
+7.	            // Turn on accelerometer
+8.	            Barometer.Default.ReadingChanged += Barometer_ReadingChanged;
+9.	            Barometer.Default.Start(SensorSpeed.UI);
+10.	        }
+11.	        else
+12.	        {
+13.	            // Turn off accelerometer
+14.	            Barometer.Default.Stop();
+15.	            Barometer.Default.ReadingChanged -= Barometer_ReadingChanged;
+16.	        }
+17.	    }
+18.	}
+19.	
+20.	private void Barometer_ReadingChanged(object sender, BarometerChangedEventArgs e)
+21.	{
+22.	    // Update UI Label with barometer state
+23.	    BarometerLabel.TextColor = Colors.Green;
+24.	    BarometerLabel.Text = $"Barometer: {e.Reading}";
+25.	}
+
+
+//Compass
+1.	private void ToggleCompass()
+2.	{
+3.	    if (Compass.Default.IsSupported)
+4.	    {
+5.	        if (!Compass.Default.IsMonitoring)
+6.	        {
+7.	            // Turn on compass
+8.	            Compass.Default.ReadingChanged += Compass_ReadingChanged;
+9.	            Compass.Default.Start(SensorSpeed.UI);
+10.	        }
+11.	        else
+12.	        {
+13.	            // Turn off compass
+14.	            Compass.Default.Stop();
+15.	            Compass.Default.ReadingChanged -= Compass_ReadingChanged;
+16.	        }
+17.	    }
+18.	}
+19.	
+20.	private void Compass_ReadingChanged(object sender, CompassChangedEventArgs e)
+21.	{
+22.	    // Update UI Label with compass state
+23.	    CompassLabel.TextColor = Colors.Green;
+24.	    CompassLabel.Text = $"Compass: {e.Reading}";
+25.	}
+
+
+//Shake
+1.	private void ToggleShake()
+2.	{
+3.	    if (Accelerometer.Default.IsSupported)
+4.	    {
+5.	        if (!Accelerometer.Default.IsMonitoring)
+6.	        {
+7.	            // Turn on compass
+8.	            Accelerometer.Default.ShakeDetected += Accelerometer_ShakeDetected;
+9.	            Accelerometer.Default.Start(SensorSpeed.Game);
+10.	        }
+11.	        else
+12.	        {
+13.	            // Turn off compass
+14.	            Accelerometer.Default.Stop();
+15.	            Accelerometer.Default.ShakeDetected -= Accelerometer_ShakeDetected;
+16.	        }
+17.	    }
+18.	}
+19.	
+20.	private void Accelerometer_ShakeDetected(object sender, EventArgs e)
+21.	{
+22.	    // Update UI Label with a "shaked detected" notice, in a randomized color
+23.	    ShakeLabel.TextColor = new Color(Random.Shared.Next(256), Random.Shared.Next(256), Random.Shared.Next(256));
+24.	    ShakeLabel.Text = $"Shake detected";
+25.	}
+
+
+//Gyroscope
+1.	private void ToggleGyroscope()
+2.	{
+3.	    if (Gyroscope.Default.IsSupported)
+4.	    {
+5.	        if (!Gyroscope.Default.IsMonitoring)
+6.	        {
+7.	            // Turn on compass
+8.	            Gyroscope.Default.ReadingChanged += Gyroscope_ReadingChanged;
+9.	            Gyroscope.Default.Start(SensorSpeed.UI);
+10.	        }
+11.	        else
+12.	        {
+13.	            // Turn off compass
+14.	            Gyroscope.Default.Stop();
+15.	            Gyroscope.Default.ReadingChanged -= Gyroscope_ReadingChanged;
+16.	        }
+17.	    }
+18.	}
+19.	
+20.	private void Gyroscope_ReadingChanged(object sender, GyroscopeChangedEventArgs e)
+21.	{
+22.	    // Update UI Label with gyroscope state
+23.	    GyroscopeLabel.TextColor = Colors.Green;
+24.	    GyroscopeLabel.Text = $"Gyroscope: {e.Reading}";
+25.	}
+
+
+//Magnetometer
+1.	private void ToggleMagnetometer()
+2.	{
+3.	    if (Magnetometer.Default.IsSupported)
+4.	    {
+5.	        if (!Magnetometer.Default.IsMonitoring)
+6.	        {
+7.	            // Turn on compass
+8.	            Magnetometer.Default.ReadingChanged += Magnetometer_ReadingChanged;
+9.	            Magnetometer.Default.Start(SensorSpeed.UI);
+10.	        }
+11.	        else
+12.	        {
+13.	            // Turn off compass
+14.	            Magnetometer.Default.Stop();
+15.	            Magnetometer.Default.ReadingChanged -= Magnetometer_ReadingChanged;
+16.	        }
+17.	    }
+18.	}
+19.	
+20.	private void Magnetometer_ReadingChanged(object sender, MagnetometerChangedEventArgs e)
+21.	{
+22.	    // Update UI Label with magnetometer state
+23.	    MagnetometerLabel.TextColor = Colors.Green;
+24.	    MagnetometerLabel.Text = $"Magnetometer: {e.Reading}";
+25.	}
+
+
+//Orientation
+1.	private void ToggleOrientation()
+2.	{
+3.	    if (OrientationSensor.Default.IsSupported)
+4.	    {
+5.	        if (!OrientationSensor.Default.IsMonitoring)
+6.	        {
+7.	            // Turn on compass
+8.	            OrientationSensor.Default.ReadingChanged += Orientation_ReadingChanged;
+9.	            OrientationSensor.Default.Start(SensorSpeed.UI);
+10.	        }
+11.	        else
+12.	        {
+13.	            // Turn off compass
+14.	            OrientationSensor.Default.Stop();
+15.	            OrientationSensor.Default.ReadingChanged -= Orientation_ReadingChanged;
+16.	        }
+17.	    }
+18.	}
+19.	
+20.	private void Orientation_ReadingChanged(object sender, OrientationSensorChangedEventArgs e)
+21.	{
+22.	    // Update UI Label with orientation state
+23.	    OrientationLabel.TextColor = Colors.Green;
+24.	    OrientationLabel.Text = $"Orientation: {e.Reading}";
+25.	}
+

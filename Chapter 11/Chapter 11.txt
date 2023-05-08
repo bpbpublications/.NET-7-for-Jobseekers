@@ -1,0 +1,97 @@
+//Example of HubConnection Class
+1.	using Microsoft.AspNetCore.SignalR.Client;
+2.	using System;
+3.	using System.Threading.Tasks;
+4.	using RealTime.Models;
+5.	
+6.	namespace ExampleClient;
+7.	
+8.	public sealed class Consumer : IAsyncDisposable
+9.	{
+10.	    private readonly string HostDomain =
+11.	        Environment.GetEnvironmentVariable("HOST_DOMAIN");
+12.	    
+13.	    private HubConnection _hubConnection;
+14.	
+15.	    public Consumer()
+16.	    {
+17.	        _hubConnection = new HubConnectionBuilder()
+18.	            .WithUrl(new Uri($"{HostDomain}/hub/notifications"))
+19.	            .WithAutomaticReconnect()
+20.	            .Build();
+21.	    }
+22.	
+23.	    public Task StartNotificationConnectionAsync() =>
+24.	        _hubConnection.StartAsync();
+25.	
+26.	    public async ValueTask DisposeAsync()
+27.	    {
+28.	        if (_hubConnection is not null)
+29.	        {
+30.	            await _hubConnection.DisposeAsync();
+31.	            _hubConnection = null;
+32.	        }
+33.	    }
+34.	}
+
+
+//Configure SignalR server in program.cs
+//•	You must add this using:
+1.	using SignalRChat.Hubs;
+
+//•	In the builder section, add the following line:
+1.	builder.Services.AddSignalR();
+
+//•	This next line can be added at the end, before app.Run();
+1.	app.MapHub<ChatHub>("/chatHub");
+
+
+//Parameter Binding
+1.	Services.AddScoped<SomeCustomType>();
+2.	
+3.	[Route("[controller]")]
+4.	[ApiController]
+5.	public class MyController : ControllerBase
+6.	{
+7.	    // Both actions will bound the SomeCustomType from the DI container
+8.	    public ActionResult GetWithAttribute([FromServices]SomeCustomType service) => Ok();
+9.	    public ActionResult Get(SomeCustomType service) => Ok();
+10.	}
+
+
+//DisableImplicitFromServicesParameters
+1.	Services.Configure<ApiBehaviorOptions>(options =>
+2.	{
+3.	     options.DisableImplicitFromServicesParameters = true;
+4.	})
+
+//Client Source Generatot
+1.	Services.AddScoped<SomeCustomType>();
+2.	
+3.	public class MyHub : Hub
+4.	{
+5.	    // SomeCustomType comes from DI by default now
+6.	    public Task Method(string text, SomeCustomType type) => Task.CompletedTask;
+7.	}
+
+
+//FromServices
+1.	public class MyHub : Hub
+2.	{
+3.	    public Task Method(string arguments, [FromServices] SomeCustomType type);
+4.	}
+
+
+//DisableImplicitFromServicesParameters for Dependency Injection
+1.	services.AddSignalR(options =>
+2.	{
+3.	    options.DisableImplicitFromServicesParameters = true;
+4.	});
+
+//Summaries and descriptions for route handlers
+//using minimal APIs
+1.	app.MapGet("/hello", () => ...)
+2.	  .WithDescription("Sends a request to the backend HelloService to process a greeting request.");
+
+//using an attribute on route handler delegate
+1.	app.MapGet("/hello", [EndpointSummary("Sends a Hello request to the backend")]() => ...)

@@ -1,0 +1,65 @@
+--Startup File old .Net Versions
+1.	public class Startup
+2.	{
+3.	    public void Configur(IApplicationBuilder app=
+4.	    {
+5.	          app.UseStaticFiles();
+6.	    }
+7.	}
+
+--Program File starting .Net 6
+1.	var builder = WebApplication.CreateBuilder(args);
+2.	var app = builder.Build();
+3.	
+4.	app.UseStaticFiles();
+5.	
+6.	app.Run();
+
+--Routing, earlier versions
+1.     public class Startup 
+2.     { 
+3.         public void Configure(IApplicationBuilder app) 
+4.         { 
+5.             app.UseRouting(); 
+6.             app.UseEndpoints(endpoints => 
+7.             { 
+8.                 endpoints.MapRazorPages(); 
+9.                 endpoints.MapDefaultControllerRoute(); 
+10.             }); 
+11.  
+12.         } 
+13.     } 
+
+
+--Routing, now
+1. var builder = WebApplication.CreateBuilder(args); 
+2. var app = builder.Build(); 
+3.  
+4. app.MapRazorPages(); 
+5. app.MapDefaultControllerRoute(); 
+6.  
+7. app.Run(); 
+
+
+--Add Services, earlier versions
+1.	public class Startup 
+2.	{ 
+3.	public void ConfigureServices(IServiceCollection services) 
+4.	{ 
+5.	//Add Memory Cache Services 6.             services.AddMemoryCache(); 
+7.  
+8.	//Add Custom Scoped Services 
+9.	services.AddScoped<ITestService, TestService>(); 
+10.	services.AddScoped<ITestRepository, TestRepository>(); 
+11.	} 
+12. } 
+
+
+--Add Services, now
+var builder = WebApplication.CreateBuilder(args);
+//Add Memory Cache Services
+builder.Services.AddMemoryCache();
+//Add Custom Scoped Services
+builder.Services.AddScoped<ITestService,TestService>();
+builder.Services.AddScoped<ITestRepository,TestRepository>();
+var app = builder.Build();

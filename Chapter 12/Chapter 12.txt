@@ -1,0 +1,72 @@
+//ExecuteDelete
+1.	var excludedData = context.SampleTable
+2.	                    .Where(p => p.Name.Contains("Test"))
+3.	                    .ExecuteDelete();
+
+
+//Delete from SampleTable
+1.	DELETE FROM [ST]
+2.	FROM [SAMPLETABLE] AS [ST]
+3.	WHERE [ST].[NAME] LIKE N'%TEST%'
+
+
+//ExecuteUpdateAsync
+1.	await context.SampleTable.ExecuteUpdateAsync(
+2.	    s => s.SetProperty(b => b.Name, b => b.Name+ " *Updated!*"));
+
+
+//ExecuteUpdate
+1.	var updatedData = context.SampleTable
+2.	.Where(p => p.TableId<= 80)
+3.	.ExecuteUpdate(p => p.SetProperty(x => x.Name, x => "FullyUpdated"));
+
+
+//SetProperty
+1.	var updatedData = context.SampleTable.Where(p => p.TableId<= 80)
+2.	     .ExecuteUpdate(p => p.SetProperty(n => n.Name, n => "New Name")
+3.	                      .SetProperty(e => e.Email, e => "New Email"));
+
+
+//JSon query using LINQ
+1.	var postsWithViews = await context.Posts.Where(post => post.Metadata!.Views > 3000)
+2.	    .AsNoTracking()
+3.	    .Select(
+4.	        post => new
+5.	        {
+6.	            post.Author!.Name,
+7.	            post.Metadata!.Views,
+8.	            Searches = post.Metadata.TopSearches,
+9.	            Commits = post.Metadata.Updates
+10.	        })
+11.	    .ToListAsync();
+
+//Translation of LINQ code to SQL
+1.	SELECT [a].[Name],
+2.	       CAST(JSON_VALUE([p].[Metadata],'$.Views') AS int),
+3.	       JSON_QUERY([p].[Metadata],'$.TopSearches'),
+4.	       [p].[Id],
+5.	       JSON_QUERY([p].[Metadata],'$.Updates')
+6.	FROM [Posts] AS [p]
+7.	LEFT JOIN [Authors] AS [a] ON [p].[AuthorId] = [a].[Id]
+8.	WHERE CAST(JSON_VALUE([p].[Metadata],'$.Views') AS int) > 3000
+
+
+//SaveChanges
+1.	var arthur = await context.Authors.SingleAsync(author => author.Name.StartsWith("Arthur"));
+2.	
+3.	arthur.Contact.Address.Country = "United Kingdom";
+4.	
+5.	await context.SaveChangesAsync();
+
+//SQL parameter generated
+1.	@p0='["United Kingdom"]' (Nullable = false) (Size = 18)
+
+//JSON_MODIFY
+1.	UPDATE [Authors] 
+2.	SET [Contact] = JSON_MODIFY([Contact], 'strict $.Address.Country', JSON_VALUE(@p0, '$[0]'))
+3.	OUTPUT 1
+4.	WHERE [Id] = @p1;
+
+//Add Default Database First Templates
+1.	dotnet new --install Microsoft.EntityFrameworkCore.Templates
+2.	dotnet new ef-templates

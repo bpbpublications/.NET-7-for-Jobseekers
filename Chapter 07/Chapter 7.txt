@@ -1,0 +1,75 @@
+//Add Map Control 
+1.	<Grid>
+2.	    <Map x:Name="map"/>
+3.	</Grid>
+
+//Initialize it
+1.	protected override void OnNavigatedTo(NavigatedToEventArgs args)
+2.	{
+3.	    base.OnNavigatedTo(args);
+4.	
+5.	    var mauiLoc= new Location(20.84242, -156.32949);
+6.	
+7.	    MapSpan mapSpan = MapSpan.FromCenterAndRadius(mauiLoc, Distance.FromKilometers(3));
+8.	    map.MoveToRegion(mapSpan);
+9.	    map.Pins.Add(new Pin
+10.	    {
+11.	        Label = "Welcome to .NET MAUI!",
+12.	        Location = mauiLoc,
+13.	    });
+14.	}
+
+
+//Menu Flyout 
+1.	<Editor Text="This is my text and I want bold.">
+2.	    <FlyoutBase.ContextFlyout>
+3.	        <MenuFlyout>
+4.	            <MenuFlyoutItem Text="Bold" Clicked="OnBoldClicked"/>
+5.	            <MenuFlyoutItem Text="Italics" Clicked="OnItalicsClicked"/>
+6.	            <MenuFlyoutItem Text="Underline" Clicked="OnUnderlineClicked"/>
+7.	        </MenuFlyout>
+8.	    </FlyoutBase.ContextFlyout>
+9.	</Editor>
+
+
+//Tooltips
+1.	<RadioButton Value="home" 
+2.	    ToolTipProperties.Text="Home"
+3.	    SemanticProperties.DescriptionText="Home menu item">
+4.	    <RadioButton.Content>
+5.	        <Image Source="home.png"/>
+6.	    </RadioButton.Content>
+7.	</RadioButton>
+
+
+//PointerGesture
+<PointerGestureRecognizer PointerEntered="HoverBegan" PointerExited="HoverEnded" PointerMoved="HoverMoved" />
+
+//Button Mask
+1.	var secondaryClick = new TapGestureRecognizer()
+2.	{
+3.	    Buttons = ButtonsMask.Secondary
+4.	};
+5.	
+6.	secondaryClick.Tapped += SecondaryClick_Tapped;
+
+
+//Position and set windows size
+1.	const int newWidth = 800;
+2.	const int newHeight = 600;
+3.	
+4.	// get screen size
+5.	var disp = DeviceDisplay.Current.MainDisplayInfo;
+6.	
+7.	// center the window
+8.	Window.X = (disp.Width / disp.Density - newWidth) / 2;
+9.	Window.Y = (disp.Height / disp.Density - newHeight) / 2;
+10.	
+11.	// resize
+12.	Window.Width = newWidth;
+13.	Window.Height = newHeight;
+
+
+
+
+

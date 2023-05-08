@@ -1,0 +1,121 @@
+//Data binding modifiers
+1.	<input @bind="dateField" @bind:after="SearchDates" />
+2.	
+3.	@code {
+4.	              DateTime.dateField;
+5.	
+6.	              async Task SearchDates()
+7.	              {
+8.	                  //perform search in some data using the date in the dateField
+9.	              }
+10.	}
+
+
+1. <input @bind:get="MyDate" @bind:set="DateChanged" /> 
+2.  
+3. @code { 
+4.   [Parameter] public DateTime MyValue {get; set;} 
+5.   [Parameter] public EventCallback<DateTime> DateChanged {get; set;} 
+
+//Virtualization
+1.	<Virtualize SpacerElement="tr">...</Virtualize>
+
+
+//Problem Details Service
+1. builder.Services.AddProblemDetails();
+
+//OpenAPI
+1.	app.MapGet("/todos/{id}", (int id) => ...)
+2.	    .WithOpenApi();
+
+
+1.	app.MapGet("/todos/{id}", (int id) => ...)
+2.	    .WithOpenApi(operation => {
+3.	        operation.Summary = "Retrieve a Todo given its ID";
+4.	        operation.Parameters[0].AllowEmptyValue = false;
+5.	        return operation;
+6.	    });
+
+//Self-describing minimal APIs
+1.	namespace Microsoft.AspNetCore.Http.Metadata; 
+2.	 
+3.	public interface IEndpointMetadataProvider
+4.	{
+5.	     static abstract void PopulateMetadata(EndpointMetadataContext context);
+6.	}
+7.	
+8.	public interface IEndpointParameterMetadataProvider
+9.	{
+10.	      static abstract void PopulateMetadata(EndpointParameterMetadataContext parameterContext);
+11.	}
+
+
+//Links
+1. // Url that contains some action in a controller:  
+2. Url.Action<ControllerA>(c => c.Index()); 
+3.  
+4. // Url linkiing to an action inside the same controller 
+5. Url.Action(c => c.Index()); 
+
+//LibraryImportGenerator
+//Then
+1.	public static class Native
+2.	{
+3.	     [DllImport(nameof(Native).CharSet = Chasert.Unicode)]
+4.	     public extern static string ToLower(string str);
+5.	}
+//Now
+1.	 public static class Native
+2.	{
+3.	     [LibraryImport(nameof(Native).StringMarshalling= StringMarshalling.Utf16)]
+4.	     public static partial string ToLower(string str);
+5.	}
+
+//Json
+1. [JsonDerivedType(typeof(Derived))] 
+2. public class Base 
+3. { 
+4.     public int X { get; set; } 
+5. } 
+6.  
+7. public class Derived : Base 
+8. { 
+9.     public int Y { get; set; } 
+10. } 
+11.  
+12. //.NET 7 Serialization 
+13. Base value = new Derived(); 
+14. JsonSerializer.Serialize<Base>(value); // { "X" : 0, "Y" : 0 } 
+15.  
+16. //.NET 7 Deserialization 
+17. Base value = JsonSerializer.Deserialize<Base>(@"{ ""X"" : 0, ""Y"" : 0 }
+"); 
+18. value is Derived; // false 
+
+
+//JWT authentication configuration
+1. var builder = WebApplication.CreateBuilder(args); 
+2.  
+3. builder.Authentication.AddJwtBearer(); // New property 
+4.  
+5. var app = builder.Build(); 
+
+
+1.	{
+2.	   "Logging": {
+3.	       "LogLevel": {
+4.	            "Default": "Information",
+5.	            "Microsoft.AspNetCore": "Warning"
+6.	       }
+7.	    },
+8.	    "AllowedHosts":"*",
+9.	    "Authentication": {
+10.	            "DefaultScheme":"JwtBearer",
+11.	            "Schemes": {
+12.	                  "JwtBearer": {
+13.	                         "Audiences": ["http://localhost:5000", "https://localhost:5001"],
+14.	                         "ClaimsIssuer": "user-jwt-here"
+15.	                  }
+16.	            }
+17.	    }
+18.	}

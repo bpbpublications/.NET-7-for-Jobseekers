@@ -1,0 +1,198 @@
+//Creating minimal API project with .Net 7
+1.	dotnet new web -o UrlShortener -f net7.0
+
+//Open the project inside Visual Studio Code
+1.	cd UrlShortener
+2.	code .
+
+//Add Orleans to the project
+//Install the package
+1.	dotnet add package Microsoft.Orleans.Server -v 7.0.0
+
+//Add the using statements 
+1.	using Microsoft.AspNetCore.Http.Extensions;
+2.	using Orleans.Runtime;
+
+//Add an interface definition 
+1.	public interface IUrlShortenerGrain : IGrainWithStringKey
+2.	{
+3.	    Task SetUrl(string shortenedRouteSegment, string fullUrl);
+4.	    Task<string> GetUrl();
+5.	}
+
+//Create a class that will inherit from Grain class
+1.	public class UrlShortenerGrain : Grain, IUrlShortenerGrain
+2.	{
+3.	    private KeyValuePair<string, string> _cache;
+4.	
+5.	    public Task SetUrl(string shortenedRouteSegment, string fullUrl)
+6.	    {
+7.	        _cache = new KeyValuePair<string, string>(shortenedRouteSegment, fullUrl);
+8.	        return Task.CompletedTask;
+9.	    }
+10.	
+11.	    public Task<string?> GetUrl()
+12.	    {
+13.	        return Task.FromResult(_cache.Value);
+14.	    }
+15.	}
+
+//Set up the Silo. Add, at the top of Program class, the refactoring of the builder code to use Orleans
+1.	var builder = WebApplication.CreateBuilder();
+2.	
+3.	builder.Host.UseOrleans(siloBuilder =>
+4.	{
+5.	    siloBuilder.UseLocalhostClustering();
+6.	});
+7.	
+8.	var app = builder.Build();
+
+//Retrieve the instance of grain factory.
+1.	var grainFactory = app.Services.GetRequiredService<IGrainFactory>();
+
+4.	Now, we must configure and create an API endpoint that will shorten URLs.
+i.	In our code, after the existing “Hello World” endpoint, we must add this code:
+1.	app.MapGet(“/shorten/{*path}”,
+2.	    async (IgrainFactory grains, HttpRequest request, string path) =>
+3.	{
+4.	    return Results.Ok();
+5.	});
+
+//Update the body of the GET method 
+1.	app.MapGet(“/shorten/{*path}”,
+2.	async (IgrainFactory grains, HttpRequest request, string path) =>
+3.	{
+4.	    var shortenedRouteSegment = Guid.NewGuid().GetHashCode().ToString(“X”);
+5.	    var shortenerGrain = grains.GetGrain<IurlShortenerGrain>(shortenedRouteSegment);
+6.	    await shortenerGrain.SetUrl(shortenedRouteSegment, path);
+7.	    var resultBuilder = new UriBuilder(request.GetEncodedUrl())
+8.	    {
+9.	        Path = $”/go/{shortenedRouteSegment}”
+10.	    };
+11.	
+12.	    return Results.Ok(resultBuilder.Uri);
+13.	});
+
+//Create another endpoint to redirect shortened URLs to the full address
+1.	app.MapGet(“/go/{shortenedRouteSegment}”,
+2.	    async (IgrainFactory grains, string shortenedRouteSegment) =>
+3.	{
+4.	    var shortenerGrain = grains.GetGrain<IurlShortenerGrain>(shortenedRouteSegment);
+5.	    var url = await shortenerGrain.GetUrl();
+6.	
+7.	    return Results.Redirect(url);
+8.	});
+
+//In the address bar of the browser, test the shorten endpoint
+1.	{localhost}/shorten/https://microsoft.com
+
+//Persist data
+1.	public interface IpersistentState<Tstate> where Tstate : new()
+2.	{
+3.	    Tstate State { get; set; }
+4.	    string Etag { get; }
+5.	    Task ClearStateAsync();
+6.	    Task WriteStateAsync();
+7.	    Task ReadStateAsync();
+8.	}
+
+
+//PersistentStateAttribute
+1.	public class UrlShortenerGrain : Grain, IurlShortenerGrain
+2.	{
+3.	    private readonly IpersistentState<KeyValuePair<string, string>> _cache;
+4.	
+5.	    public UrlShortenerGrain(
+6.	        [PersistentState(
+7.	            stateName: “url”,
+8.	            storageName: “urls”)]
+9.	            IpersistentState<KeyValuePair<string, string>> state)
+10.	    {
+11.	        _cache = state;
+12.	    }
+13.	}
+
+
+//Configure SiloBuilder
+1.	builder.Host.UseOrleans(siloBuilder =>
+2.	{
+3.	    siloBuilder.UseLocalhostClustering();
+4.	    siloBuilder.AddAzureBlobGrainStorage("urls",
+5.	        // Recommended: Connect to Blob Storage using DefaultAzureCredential
+6.	        options =>
+7.	        {
+8.	            options.ConfigureBlobServiceClient(new Uri("https://<your-account-name>.blob.core.windows.net"),
+9.	                new DefaultAzureCredential());
+10.	        });
+11.	        // Connect to Blob Storage using Connection strings
+12.	        // options => options.ConfigureBlobServiceClient(connectionString));
+13.	});
+
+
+//Configure Grains Storage
+1.	builder.Host.UseOrleans(siloBuilder =>
+2.	{
+3.	    siloBuilder.UseLocalhostClustering();
+4.	    siloBuilder.AddMemoryGrainStorage("urls");
+5.	});
+
+//Update the Grains to use PersistentState
+1.	private IPersistentState<KeyValuePair<string, string>> _cache;
+2.	
+3.	public UrlShortenerGrain(
+4.	    [PersistentState(
+5.	        stateName: "url",
+6.	        storageName: "urls")]
+7.	        IPersistentState<KeyValuePair<string, string>> state)
+8.	{
+9.	    _cache = state;
+10.	}
+
+//Update Grain Method
+1.	public async Task SetUrl(string shortenedRouteSegment, string fullUrl)
+2.	{
+3.	    _cache.State = new KeyValuePair<string, string>(shortenedRouteSegment, fullUrl);
+4.	    await _cache.WriteStateAsync();
+5.	}
+6.	
+7.	public Task<string> GetUrl()
+8.	{
+9.	    return Task.FromResult(_cache.State.Value);
+10.	}
+
+
+//Simplified Grain and Stream identifications
+//Before
+1.	 public class PingGrain : Grain, IPingGrain
+2.	{
+3.	    public ILogger<PingGrain> Logger { get; set; }
+4.	
+5.	    public PingGrain(ILogger<PingGrain> logger) => Logger = logger;
+6.	
+7.	    public Task ReceivePing(PingMessage message)
+8.	    {
+9.	        string grainId = this.GetGrainIdentity().PrimaryKeyString;
+10.	        Guid grainId = this.GetGrainIdentity().PrimaryKey;
+11.	        long grainId = this.GetGrainIdentity().PrimaryKeyLong;
+12.	
+13.	        // or...
+14.	
+15.	        string grainId = this.GetPrimaryKeyString();
+16.	        Guid grainId = this.GetPrimaryKey();
+17.	        long grainId = this.GetPrimaryKeyLong();
+18.	
+19.	        Logger.LogInformation($"{message.Message} from {grainId} at {message.Timestamp}.");
+20.	    }
+21.	}
+
+//Now, .Net7
+1.	public class PingGrain : Grain, IPingGrain
+2.	{
+3.	    public ILogger<PingGrain> Logger { get; set; }
+4.	
+5.	    public PingGrain(ILogger<PingGrain> logger) => Logger = logger;
+6.	
+7.	    public Task ReceivePing(PingMessage message)
+8.	        => Task.Run(() => Logger.LogInformation($"{message.Message} from {this.GetGrainId()} at {message.Timestamp}."));
+9.	}
+

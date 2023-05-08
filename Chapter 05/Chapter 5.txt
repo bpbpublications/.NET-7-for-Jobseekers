@@ -1,0 +1,77 @@
+//Controllers
+1.	  using Microsoft.AspNetCore.Mvc;
+2.	
+3.	namespace WebAppMVC7.Controllers
+4.	{
+5.	   public class TestController : Controller
+6.	   {
+7.	        public string Index()
+8.	        {
+9.	             return "Welcome to the Controllers in .Net 7!";
+10.	        }
+11.	   }
+12.	}
+
+
+//Home Controller
+1.         <li class="nav-item"> 
+2.             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a> 
+3.         </li> 
+4.         <li class="nav-item"> 
+5.             <a class="nav-link text-dark" asp-area="" aspcontroller="Home" asp-action="Privacy">Privacy</a> 
+6.         </li> 
+7.         <li class="nav-item"> 
+8.             <a class="nav-link text-dark" asp-area="" aspcontroller="Home" asp-action="TestView">TestView</a> 
+9.         </li> 
+
+
+//Test Controller
+1.         <li class="nav-item"> 
+2.             <a class="nav-link text-dark" asp-area="" aspcontroller="Test" asp-action="Index">Home</a> 
+3.         </li> 
+4.         <li class="nav-item"> 
+5.             <a class="nav-link text-dark" asp-area="" aspcontroller="Test" asp-action="Privacy">Privacy</a> 
+6.         </li> 
+7.         <li class="nav-item"> 
+8.             <a class="nav-link text-dark" asp-area="" aspcontroller="Test" asp-action="TestView">TestView</a> 
+9.         </li> 
+
+
+//Test Controller.cs
+1.	 public IActionResult Index()
+2.	        {
+3.	            return View();
+4.	        }
+5.	
+6.	        public IActionResult Privacy()
+7.	        {
+8.	            return View();
+9.	        }
+10.	
+11.	        public string TestView()
+12.	        {
+13.	            return "Welcome to the Controllers in .Net 7!";
+14.	        }
+
+//change TestView()
+1.	public string TestView()
+2.	        {
+3.	            return View();
+4.	        }
+
+
+//TestModel
+1.	using System.ComponentModel.DataAnnotations;
+2.	
+3.	namespace WebAppMVC7.Models
+4.	{
+5.	    public class TestModel
+6.	    {
+7.	        public int Id { get; set; }
+8.	        public string? Name { get; set; }
+9.	
+10.	        [DataType(DataType.Date)]
+11.	        public DateTime? RegisterDate { get; set; } = new DateTime();
+12.	        public string? Testfield { get; set; }
+13.	    }
+14.	}
